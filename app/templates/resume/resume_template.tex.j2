@@ -1,0 +1,103 @@
+\documentclass[a4paper,10.5pt]{article}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{top=0.5in, bottom=0.5in, left=0.55in, right=0.55in}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue}
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{4pt}{2pt}
+\usepackage{setspace}
+\linespread{0.95}
+\setlength{\parskip}{0pt}
+\usepackage{mathptmx}
+
+\begin{document}
+
+\centerline{\LARGE \textbf{(( name ))}}
+((* if headline *))\centerline{\textbf{(( headline ))}}((* endif *))
+\centerline{((* if email *))\href{mailto:(( email_raw ))}{(( email ))}((* endif *))((* if email and phone_number *)) \ \textbar{} \ ((* endif *))((* if phone_number *))(( phone_number ))((* endif *))((* if (email or phone_number) and location *)) \ \textbar{} \ ((* endif *))((* if location *))(( location ))((* endif *))}
+((* if linkedin *))\centerline{\href{(( linkedin_raw ))}{(( linkedin ))}}((* endif *))
+
+\vspace{2pt}
+
+((* if summary *))
+\section*{Career Objective}
+(( summary ))
+((* endif *))
+
+((* if education *))
+\section*{Education}
+\begin{itemize}[leftmargin=*, label={}, itemsep=1pt]
+((* for item in education *))
+\item \textbf{(( item.degree ))}((* if item.institution *)) -- (( item.institution ))((* endif *))((* if item.start_date or item.end_date *)) \hfill (( item.start_date ))((* if item.start_date and item.end_date *)) -- ((* endif *))(( item.end_date ))((* endif *))((* if item.details *))\\
+(( item.details ))((* endif *))
+((* endfor *))
+\end{itemize}
+((* endif *))
+
+((* if certifications *))
+\section*{Certifications}
+\begin{itemize}[leftmargin=*, label={}, itemsep=1pt]
+((* for item in certifications *))
+\item \textbf{(( item.name ))}((* if item.issuer *)) -- (( item.issuer ))((* endif *))((* if item.date *)) \hfill (( item.date ))((* endif *))((* if item.credential_url_raw *))\\
+\href{(( item.credential_url_raw ))}{(( item.credential_url ))}((* endif *))
+((* endfor *))
+\end{itemize}
+((* endif *))
+
+((* if skill_groups *))
+\section*{Skills}
+\begin{itemize}[leftmargin=2em, itemsep=0pt]
+((* for group in skill_groups *))
+\item \textbf{(( group.category )):} (( group.skills | join(', ') ))
+((* endfor *))
+\end{itemize}
+((* endif *))
+
+((* if experience *))
+\section*{Experience}
+((* for item in experience *))
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}l l}
+\begin{tabular}[t]{@{}l@{}}
+\textbf{(( item.role ))}((* if item.company *))\\
+(( item.company ))((* endif *))
+\end{tabular}
+&
+\begin{tabular}[t]{@{}r@{}}
+(( item.start_date ))((* if item.start_date and item.end_date *)) -- ((* endif *))(( item.end_date ))((* if item.location *))\\
+(( item.location ))((* endif *))
+\end{tabular}
+\end{tabular*}
+((* if item.bullets *))
+\begin{itemize}[leftmargin=2em, itemsep=0pt]
+((* for bullet in item.bullets *))
+\item (( bullet ))
+((* endfor *))
+\end{itemize}
+((* endif *))
+\vspace{2pt}
+((* endfor *))
+((* endif *))
+
+((* if projects *))
+\section*{Projects}
+((* for item in projects *))
+\noindent\textbf{(( item.name ))}((* if item.url *))
+\hspace{0.5em}
+\href{(( item.url_raw ))}{\small{[GitHub]}}((* endif *))
+((* if item.bullets or item.technologies *))
+\begin{itemize}[leftmargin=2.5em, itemsep=0pt]
+((* for bullet in item.bullets *))
+\item (( bullet ))
+((* endfor *))
+((* if item.technologies *))
+\item \textbf{Tech Stack:} (( item.technologies | join(', ') ))
+((* endif *))
+\end{itemize}
+((* endif *))
+\vspace{2pt}
+((* endfor *))
+((* endif *))
+
+\end{document}

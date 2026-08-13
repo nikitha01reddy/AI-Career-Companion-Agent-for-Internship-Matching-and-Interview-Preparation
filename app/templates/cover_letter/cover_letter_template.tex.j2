@@ -1,0 +1,85 @@
+% Project:  TeX Cover Letter Template (Sid Lacy) — Jinja-rendered
+% Variables injected by CoverLetterTailoringService
+
+\documentclass[12pt]{letter}
+\usepackage[utf8]{inputenc}
+\usepackage[empty]{fullpage}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{fontawesome5}
+\usepackage{eso-pic}
+\usepackage{charter}
+
+\addtolength{\topmargin}{-0.5in}
+\addtolength{\textheight}{1.0in}
+\definecolor{gr}{RGB}{225,225,225}
+
+\begin{document}
+
+% Shaded header banner
+\AddToShipoutPictureBG{%
+\color{gr}
+\AtPageUpperLeft{\rule[-1.3in]{\paperwidth}{1.3in}}
+}
+
+% Header
+\begin{center}
+{\fontsize{28}{0}\selectfont\scshape (( applicant_name ))}
+
+((* if email *))\href{mailto:(( email_raw ))}{\faEnvelope\enspace (( email ))}((* endif *))((* if email and linkedin_slug *))\hfill((* endif *))
+((* if linkedin_slug *))\href{https://linkedin.com/in/(( linkedin_slug_raw ))}{\faLinkedinIn\enspace linkedin.com/in/(( linkedin_slug ))}((* endif *))((* if (email or linkedin_slug) and phone_number *))\hfill((* endif *))
+((* if phone_number *))\href{tel:(( phone_raw ))}{\faPhone\enspace (( phone_number ))}((* endif *))((* if (email or linkedin_slug or phone_number) and location *))\hfill((* endif *))
+((* if location *))\faMapMarker\enspace (( location ))((* endif *))
+\end{center}
+
+\vspace{0.2in}
+
+% Opening block
+((* if letter_date *))(( letter_date ))((* else *))\today((* endif *))\\
+
+((* if hiring_manager_name *))
+\vspace{-0.1in}(( hiring_manager_name ))\\
+((* endif *))
+((* if company_name *))
+(( company_name ))\\
+((* endif *))
+((* if company_street *))
+(( company_street ))\\
+((* endif *))
+((* if company_city or company_state or company_zip *))
+(( company_city ))((* if company_city and company_state *)), ((* endif *))(( company_state )) \ (( company_zip ))\\
+((* endif *))
+
+\vspace{-0.1in}(( salutation ))\\
+
+% Body
+\vspace{-0.1in}\setlength\parindent{24pt}
+((* if opening_paragraph *))
+\noindent (( opening_paragraph ))
+
+((* endif *))
+((* for paragraph in body_paragraphs *))
+\noindent (( paragraph ))
+
+((* endfor *))
+((* if why_this_company *))
+\noindent (( why_this_company ))
+
+((* endif *))
+((* if closing_paragraph *))
+\noindent (( closing_paragraph ))
+
+((* endif *))
+
+% Closer
+\vspace{0.1in}
+\vfill
+
+\begin{flushright}
+(( closer )),
+
+\vspace{-0.1in}(( signature_name ))((* if job_title *))\\
+(( job_title ))((* endif *))
+\end{flushright}
+
+\end{document}
