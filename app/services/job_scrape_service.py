@@ -11,7 +11,8 @@ from app.database.connection import SessionLocal
 from app.database.repositories.job_repository import JobRepository
 from app.rag.ingestion import IngestionPipeline
 from app.schemas.job import ScrapeJobsResponse
-from app.scraper.mocker_scraper import MockScraper
+# from app.scraper.mocker_scraper import MockScraper
+from app.scraper.csv_scraper import CsvScraper
 
 logger = logging.getLogger(__name__)
 
@@ -30,8 +31,8 @@ class StaticJobSource:
 class JobScrapeService:
     """Run the mock scraper, then persist to DB and vector store in parallel."""
 
-    def __init__(self, job_source: MockScraper | None = None) -> None:
-        self._job_source = job_source or MockScraper()
+    def __init__(self, job_source: CsvScraper | None = None) -> None:
+        self._job_source = job_source or CsvScraper()
 
     async def run(self, *, reset_vectors: bool = True) -> ScrapeJobsResponse:
         """Scrape once, then persist to Postgres and RAG concurrently."""
