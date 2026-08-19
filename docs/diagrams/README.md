@@ -1,6 +1,6 @@
 # Agent flow diagrams (draw.io)
 
-Editable source diagrams for the AI Internship Agent architecture. Open any `.drawio` file in [diagrams.net](https://app.diagrams.net) (File → Open from → Device).
+Editable source diagrams for the AI Career Companion Agent for Internship Matching and Interview Preparation architecture. Open any `.drawio` file in [diagrams.net](https://app.diagrams.net) (File → Open from → Device).
 
 | Diagram | Source (edit) | Preview |
 | --- | --- | --- |
