@@ -22,7 +22,19 @@ SKILL_GAP_INSTRUCTIONS = (
     "`summary` — one concise sentence advising what to strengthen. "
     "Do not invent candidate skills. Prefer concrete tool/tech names from the job. "
     "If the job lists few explicit skills, infer the most relevant ones from the "
-    "description. Keep total evaluated skills between 3 and 12 when possible."
+    "description. Keep total evaluated skills between 3 and 12 when possible. "
+    "Field-name rules (use these EXACT JSON keys — do not rename them): "
+    "`matched_skills` items must have: skill, status (always \"matched\"). "
+    "`skill_gaps` items must have: skill, importance, reason. "
+    "Use `importance` (high|medium|low) — not priority or level. "
+    "`readiness` must have: matched, total, percentage. "
+    "Use `matched` and `total` — not matched_count/total_count. "
+    "`percentage` must be a whole integer 0-100 (round if needed). "
+    "Example readiness: {\"matched\":2,\"total\":5,\"percentage\":40}. "
+    "Example matched_skills item: {\"skill\":\"Python\",\"status\":\"matched\"}. "
+    "Example skill_gaps item: "
+    "{\"skill\":\"Docker\",\"importance\":\"high\","
+    "\"reason\":\"Required for containerized deployment.\"}."
 )
 
 

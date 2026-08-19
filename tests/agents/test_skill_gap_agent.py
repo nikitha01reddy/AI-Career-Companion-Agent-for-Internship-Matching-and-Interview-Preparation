@@ -16,6 +16,22 @@ from app.schemas.skill_gap import (
 )
 
 
+class TestReadinessScore:
+    """Cloud-model drift normalization for readiness fields."""
+
+    def test_accepts_fractional_percentage(self) -> None:
+        score = ReadinessScore.model_validate({"matched": 2, "total": 7, "percentage": 28.57})
+        assert score.percentage == 29
+
+    def test_accepts_matched_count_aliases(self) -> None:
+        score = ReadinessScore.model_validate(
+            {"matched_count": 2, "total_count": 7, "percentage": 28.6}
+        )
+        assert score.matched == 2
+        assert score.total == 7
+        assert score.percentage == 29
+
+
 class TestSkillGapAgent:
     """LLM skill-gap analysis + pruning."""
 

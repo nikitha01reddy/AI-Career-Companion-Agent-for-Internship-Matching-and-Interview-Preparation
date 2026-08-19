@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 .env
 .pytest_cache/
+.pytest-tmp/
 .mypy_cache/
 .ruff_cache/
 vector_db/
@@ -12,5 +13,27 @@ tailored_cover_letters/
 *.egg-info/
 dist/
 build/
+
+# Logs and local debug artifacts
+*.log
+cookies.txt
+cookies*.txt
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Legacy/local Chroma data (root rag/ experiments)
+rag/chroma_db/
+
+# OS
+.DS_Store
+Thumbs.db
+
 # Cursor
 .cursor/
+
+# Local agent notes (not for remote)
+AGENTS.md
+chat_Agent_plan.md

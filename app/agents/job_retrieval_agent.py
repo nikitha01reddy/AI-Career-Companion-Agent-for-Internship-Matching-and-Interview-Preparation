@@ -38,11 +38,6 @@ class JobRetrievalAgent:
             "preferred_location": profile.location_preference,
             "headline": profile.headline,
             "skills": profile.skills,
-            "education": profile.education,
-            "projects": profile.projects,
-            "experience": profile.experience,
-            "profile_summary": profile.profile_summary,
-            "certifications": profile.certifications,
         }
         return (
             "Find internships that best match this candidate profile:\n"

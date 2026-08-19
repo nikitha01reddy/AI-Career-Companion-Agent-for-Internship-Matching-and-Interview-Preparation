@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Protocol
 
-from Scrapper.mock_scapper import MockScraper
+from scraper.mock_scraper import MockScraper
 from rag.config import RAGConfig
 from rag.embedding_service import EmbeddingService, OllamaEmbeddingService
 from models.rag_models import InternshipJob

@@ -7,6 +7,18 @@ from typing import Any, Literal, Self
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
+def _coerce_readiness_aliases(data: Any) -> Any:
+    """Normalize common cloud-model renames before ReadinessScore validation."""
+    if not isinstance(data, dict):
+        return data
+    normalized = dict(data)
+    if "matched" not in normalized and "matched_count" in normalized:
+        normalized["matched"] = normalized.pop("matched_count")
+    if "total" not in normalized and "total_count" in normalized:
+        normalized["total"] = normalized.pop("total_count")
+    return normalized
+
+
 Importance = Literal["high", "medium", "low"]
 
 
@@ -16,6 +28,18 @@ class ReadinessScore(BaseModel):
     matched: int = Field(ge=0)
     total: int = Field(ge=0)
     percentage: int = Field(ge=0, le=100)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_aliases(cls, data: Any) -> Any:
+        return _coerce_readiness_aliases(data)
+
+    @field_validator("percentage", mode="before")
+    @classmethod
+    def _coerce_percentage(cls, value: Any) -> Any:
+        if isinstance(value, float):
+            return round(value)
+        return value
 
     @model_validator(mode="after")
     def _clamp_matched_and_percentage(self) -> Self:

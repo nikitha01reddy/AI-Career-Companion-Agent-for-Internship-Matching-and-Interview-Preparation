@@ -64,6 +64,8 @@ class TestJobRetrievalAgent:
         assert matches[0].citation.apply_url == "https://example.com/apply"
         assert matches[0].citation.vector_document_id == "job-1"
         assert "private@example.com" not in retriever.query
+        assert "Python" in retriever.query
+        assert "Remote" in retriever.query
         assert "Backend Engineer" in retriever.query
 
 
