@@ -1,6 +1,6 @@
 # AI Career Companion Agent for Internship Matching and Interview Preparation
 
-AI-powered internship matching platform. Users sign up, upload a resume, and get
+AI-powered internship matching and interview preparation platform. Users sign up, upload a resume, and get
 matched against scraped internship listings using a RAG pipeline. They can tailor
 a resume or cover letter toward a job, analyze skill gaps, prepare for interviews,
 track applications, and chat with a conversational career assistant.
@@ -10,7 +10,7 @@ track applications, and chat with a conversational career assistant.
 ### Backend (`app/`)
 
 ```text
-AI Career Companion Agent for Internship Matching and Interview Preparation/
+.   # AI Career Companion Agent for Internship Matching and Interview Preparation
 ├── app/
 │   ├── main.py                         # FastAPI entry point, CORS, router wiring
 │   ├── api/
