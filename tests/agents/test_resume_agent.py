@@ -10,20 +10,31 @@ from app.agents.resume_agent import (
     CONTACT_ALREADY_KNOWN_INSTRUCTION,
     CONTACT_WANTED_INSTRUCTION,
     ExperienceSection,
+    ProjectsSection,
     ResumeAgent,
 )
 from app.core.exceptions import DocumentParsingError
-from app.schemas.user_detail import ExperienceItem, ResumeData
+from app.schemas.user_detail import ExperienceItem, ProjectItem, ResumeData
 
-RESUME_TEXT = """A Chetan Varma
+RESUME_TEXT = """John Doe
 Associate Data Scientist
-chetanvarmaatla@gmail.com | +91 9441321253
-https://www.linkedin.com/in/chetan-varma-a-980631335/
+john.doe@example.com | +91 9876543210
+https://www.linkedin.com/in/john-doe-123456789/
 Experience
 Associate Data Scientist
 Seanergy.ai
 Feb 2026 - Present
 - Developed backend services for AI-powered voice agents.
+"""
+
+PROJECTS_RESUME_TEXT = """John Doe
+Associate Data Scientist
+john.doe@example.com | +91 9876543210
+https://www.linkedin.com/in/john-doe-123456789/
+Projects
+Knowledge Engine
+- Built a RAG support system.
+- Tech Stack: Python, LangChain
 """
 
 
@@ -67,6 +78,29 @@ class TestResumeAgent:
         assert len(result.experience) == 1
 
     @pytest.mark.asyncio
+    async def test_rereads_projects_section_when_first_pass_returns_none(self) -> None:
+        client = AsyncMock()
+        client.extract.side_effect = [
+            ResumeData(headline="Associate Data Scientist", projects=[]),
+            ProjectsSection(
+                projects=[
+                    ProjectItem(
+                        name="Knowledge Engine",
+                        bullets=["Built a RAG support system."],
+                        technologies=["Python"],
+                        url="GitHub",
+                    )
+                ]
+            ),
+        ]
+
+        result = await ResumeAgent(client).parse(PROJECTS_RESUME_TEXT)
+
+        assert client.extract.await_count == 2
+        assert [item.name for item in result.projects] == ["Knowledge Engine"]
+        assert result.projects[0].bullets == ["Built a RAG support system."]
+
+    @pytest.mark.asyncio
     async def test_drops_entries_without_a_role_or_company(self) -> None:
         client = AsyncMock()
         client.extract.return_value = ResumeData(
@@ -106,8 +140,8 @@ class TestResumeAgent:
 
         result = await ResumeAgent(client).parse(RESUME_TEXT)
 
-        assert result.phone_number == "+91 9441321253"
-        assert result.linkedin == "https://www.linkedin.com/in/chetan-varma-a-980631335"
+        assert result.phone_number == "+91 9876543210"
+        assert result.linkedin == "https://www.linkedin.com/in/john-doe-123456789"
         assert CONTACT_ALREADY_KNOWN_INSTRUCTION in client.extract.await_args.args[2]
 
     @pytest.mark.asyncio

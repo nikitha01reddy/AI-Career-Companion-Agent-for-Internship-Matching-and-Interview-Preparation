@@ -82,15 +82,6 @@ def split_skill_values(values: Iterable[str]) -> list[str]:
     return list(seen.values())
 
 
-def _description_to_bullets(description: str) -> list[str]:
-    """Turn a project description paragraph into seed bullets."""
-    cleaned = description.strip()
-    if not cleaned:
-        return []
-    sentences = [part.strip() for part in re.split(r"(?<=[.!?])\s+", cleaned)]
-    return [sentence for sentence in sentences if sentence]
-
-
 def _keep_supported_skills(groups: list[SkillGroup], resume: ResumeData) -> list[SkillGroup]:
     """Drop skills the source resume never claimed (e.g. copied from the job post)."""
     supported = " | ".join(split_skill_values(resume.skills)).casefold()
@@ -133,7 +124,7 @@ def _restore_missing_project_bullets(
     items: list[TailoredProjectItem],
     resume: ResumeData,
 ) -> list[TailoredProjectItem]:
-    """Fall back to the source description when the LLM returned no bullets."""
+    """Fall back to the source bullets when the LLM returned no bullets."""
     by_name = {item.name.strip().casefold(): item for item in resume.projects}
     restored: list[TailoredProjectItem] = []
     for item in items:
@@ -141,7 +132,7 @@ def _restore_missing_project_bullets(
             restored.append(item)
             continue
         source = by_name.get(item.name.strip().casefold())
-        bullets = _description_to_bullets(source.description) if source else []
+        bullets = list(source.bullets) if source else []
         restored.append(item.model_copy(update={"bullets": bullets}))
     return restored
 
@@ -286,7 +277,7 @@ class ResumeTailoringService:
                     "name": item.name,
                     "url": item.url,
                     "technologies": list(item.technologies),
-                    "bullets": _description_to_bullets(item.description),
+                    "bullets": list(item.bullets),
                 }
                 for item in resume.projects
             ],

@@ -30,7 +30,14 @@ class ProjectItem(BaseModel):
     """Project entry extracted from a resume."""
 
     name: str = ""
-    description: str = ""
+    bullets: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Every bullet point listed under this project, each as one string. "
+            "Bullets belong inside this list; never turn a bullet into its own "
+            "project entry."
+        ),
+    )
     technologies: list[str] = Field(default_factory=list)
     url: str = ""
 

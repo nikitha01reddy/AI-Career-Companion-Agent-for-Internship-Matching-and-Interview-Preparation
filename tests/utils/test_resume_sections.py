@@ -9,10 +9,10 @@ from app.utils.resume_sections import (
     split_resume_sections,
 )
 
-RESUME_TEXT = """A Chetan Varma
+RESUME_TEXT = """John Doe
 Associate Data Scientist
-chetanvarmaatla@gmail.com | +91 9441321253 | Hyderabad, India
-https://www.linkedin.com/in/chetan-varma-a-980631335/
+john.doe@example.com | +91 9876543210 | Hyderabad, India
+https://www.linkedin.com/in/john-doe-123456789/
 Career Objective
 Python Developer with experience in AI-powered application development.
 Education
@@ -34,7 +34,7 @@ class TestSplitResumeSections:
     def test_detects_sections_and_header(self) -> None:
         sections = split_resume_sections(RESUME_TEXT)
 
-        assert sections.header.startswith("A Chetan Varma")
+        assert sections.header.startswith("John Doe")
         assert sections.has("experience")
         assert "Seanergy.ai" in sections.get("experience")
         assert "Knowledge Engine" not in sections.get("experience")
@@ -70,7 +70,7 @@ class TestExtractHeadline:
         assert extract_headline(header) == "Associate Data Scientist"
 
     def test_skips_contact_lines(self) -> None:
-        header = "Jane Doe\njane@example.com | +91 9441321253\nBackend Engineer"
+        header = "Jane Doe\njane@example.com | +91 9876543210\nBackend Engineer"
 
         assert extract_headline(header) == "Backend Engineer"
 
@@ -84,7 +84,7 @@ class TestExtractPhoneNumber:
     def test_reads_an_international_number(self) -> None:
         header = split_resume_sections(RESUME_TEXT).header
 
-        assert extract_phone_number(header) == "+91 9441321253"
+        assert extract_phone_number(header) == "+91 9876543210"
 
     def test_ignores_year_ranges(self) -> None:
         assert extract_phone_number("B.Tech 2021 - 2025, CGPA: 8.83") == ""
@@ -99,7 +99,7 @@ class TestExtractLinkedin:
     def test_reads_a_full_profile_url(self) -> None:
         header = split_resume_sections(RESUME_TEXT).header
 
-        assert extract_linkedin(header) == "https://www.linkedin.com/in/chetan-varma-a-980631335"
+        assert extract_linkedin(header) == "https://www.linkedin.com/in/john-doe-123456789"
 
     def test_adds_a_scheme_to_a_bare_url(self) -> None:
         assert extract_linkedin("linkedin.com/in/jane-doe") == "https://linkedin.com/in/jane-doe"

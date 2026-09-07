@@ -45,9 +45,9 @@ class TestBuildContext:
     def test_seeds_project_bullets_from_description(self) -> None:
         resume = ResumeData(
             projects=[
-                ProjectItem(
+ProjectItem(
                     name="Knowledge Engine",
-                    description="Built a RAG support system. Added Slack alerts.",
+                    bullets=["Built a RAG support system.", "Added Slack alerts."],
                     technologies=["Python"],
                     url="GitHub",
                 )
@@ -81,7 +81,7 @@ class TestMergeResume:
     def test_restores_project_bullets_when_llm_returns_none(self) -> None:
         resume = ResumeData(
             projects=[
-                ProjectItem(name="Knowledge Engine", description="Built a RAG support system.")
+                ProjectItem(name="Knowledge Engine", bullets=["Built a RAG support system."])
             ]
         )
         llm = LLMTailoredSections(

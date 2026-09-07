@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from app.core.exceptions import DocumentParsingError
 from app.llm.client import StructuredExtractionClient
-from app.schemas.user_detail import ExperienceItem, ResumeData
+from app.schemas.user_detail import ExperienceItem, ProjectItem, ResumeData
 from app.utils.resume_sections import (
     extract_headline,
     extract_linkedin,
@@ -39,6 +39,15 @@ EXPERIENCE_EXTRACTION_INSTRUCTIONS = (
     "separate entry for each bullet point."
 )
 
+PROJECTS_EXTRACTION_INSTRUCTIONS = (
+    "The document below is the PROJECTS section of a resume. Return one entry "
+    "per project, each with the project name, every bullet point under that "
+    "project in bullets, the technologies or tech stack in technologies, and the "
+    "project URL (GitHub or live link) in url when present. A project name is "
+    "usually a short title line; the bullets that follow it belong to that "
+    "project. Do not create a separate entry for each bullet point."
+)
+
 
 class ExperienceSection(BaseModel):
     """Employment history extracted from the experience section alone."""
@@ -46,6 +55,15 @@ class ExperienceSection(BaseModel):
     experience: list[ExperienceItem] = Field(
         default_factory=list,
         description="One entry per employer listed in the experience section.",
+    )
+
+
+class ProjectsSection(BaseModel):
+    """Projects extracted from the projects section alone."""
+
+    projects: list[ProjectItem] = Field(
+        default_factory=list,
+        description="One entry per project listed in the projects section.",
     )
 
 
@@ -77,6 +95,9 @@ class ResumeAgent:
         data.experience = _usable_experience(data.experience)
         if not data.experience and sections.has("experience"):
             data.experience = await self._extract_experience(sections.get("experience"))
+        data.projects = _usable_projects(data.projects)
+        if not data.projects and sections.has("projects"):
+            data.projects = await self._extract_projects(sections.get("projects"))
         if not data.headline.strip():
             data.headline = extract_headline(sections.header)
         return data
@@ -94,7 +115,25 @@ class ResumeAgent:
             return []
         return _usable_experience(section.experience)
 
+    async def _extract_projects(self, section_text: str) -> list[ProjectItem]:
+        """Re-read the projects section on its own when the first pass missed it."""
+        try:
+            section = await self._extraction_client.extract(
+                section_text,
+                ProjectsSection,
+                PROJECTS_EXTRACTION_INSTRUCTIONS,
+            )
+        except DocumentParsingError:
+            # A failed retry must not discard an otherwise valid resume parse.
+            return []
+        return _usable_projects(section.projects)
+
 
 def _usable_experience(items: list[ExperienceItem]) -> list[ExperienceItem]:
     """Drop entries that identify no employer or role."""
     return [item for item in items if item.role.strip() or item.company.strip()]
+
+
+def _usable_projects(items: list[ProjectItem]) -> list[ProjectItem]:
+    """Drop entries that identify no project name or bullets."""
+    return [item for item in items if item.name.strip() or item.bullets]
